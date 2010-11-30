@@ -1,2 +1,1 @@
-#summary One-sentence summary of this page.
-metaprogramming instrument used in tmim to generate turing machine code
+#summary metaprogramming instrument used in tmim to generate turing machine code
