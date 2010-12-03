@@ -3,7 +3,7 @@ Class TM {
 	function __construct() {}
 	static $states = array('HALT' => array(-1, 0, 'HALT'));
 	static $q0 = 'HALT';
-	static $tape = array('E');
+	static $tape = array('E', '0', '1', '_', '!', 'E');
 	static $epsi = 'E';
 	static $T = array('0', '1', '_', //2
 			"<?php\ninclude './tm.php';\n", //3
@@ -21,8 +21,15 @@ Class TM {
 		TM::$q0 = $name;
 		TM::EXE($silent);
 	}
+	static function keycode($read) {
+		foreach (TM::$T as $KEY_NUM => $SYMBOL) {
+			if ($SYMBOL == $read) 
+				return $KEY_NUM;
+		}
+		die ('KEY NOT FOUND: '.$read);
+	}
 	static function EXE($silent = false) {
-		$state = TM::$q0.'_'.TM::$tape[0];
+		$state = TM::$q0.'_'.TM::keycode(TM::$tape[0]);
 		$state_name = TM::$q0;
 		$i = 0;
 		while ($state_name != 'HALT') {
@@ -54,21 +61,18 @@ Class TM {
 				}
 			}
 			$i = $j;
-			$knum = 0;
-			foreach (TM::$T as $KEY_NUM => $SYMBOL) {
-				if ($SYMBOL == $read) {
-					$knum = $KEY_NUM;
-					break;
-				}
-			}
+			$knum = TM::keycode($read);
 			$state = TM::$states[$state][2].'_'.$knum;
 			$state_name = TM::$states[$state][2];
-			echo implode(TM::$tape)."\n";
-			echo "CARET $i\n\n";
+			if (!$silent) {
+				echo implode(TM::$tape)."\n";
+				echo "CARET $i\n\n";
+			}
 		}
 			TM::$tape{$i} = TM::$states[$state][0];
 			if (!$silent) {
 				echo "STATE $state\n";
+				echo "CARET $i\n";
 				echo implode(TM::$tape)."\n\n";
 				echo "HALT\n";
 			}
